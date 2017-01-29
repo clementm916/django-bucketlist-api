@@ -17,7 +17,7 @@ class TestBucketLists(BaseAPITestCase):
         self.assertIn('cook', str(request.data))
 
         # with wrong fields
-        payload - {'wrongfieldname': 'cook'}
+        payload = {'wrongfieldname': 'cook'}
         request = self.test_client.post(
             '/api/v1/bucketlists/', payload, HTTP_AUTHORIZATION=self.auth, format='json')
         self.assertEqual(request.status_code, 400)
@@ -27,7 +27,8 @@ class TestBucketLists(BaseAPITestCase):
         request = self.test_client.post(
             '/api/v1/bucketlists/', HTTP_AUTHORIZATION=self.auth, format='json')
         self.assertEqual(request.status_code, 400)
-        self.assertIn('"name": ["This field is required."]', str(request.data))
+        self.assertIn('name', str(request.data))
+        self.assertIn('This field is required', str(request.data))
 
     def test_retrieving_all_bucketlist(self):
         bucket_1 = Bucketlist(name="Play", created_by=self.user)

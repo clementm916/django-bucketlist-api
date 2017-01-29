@@ -18,7 +18,7 @@ class BaseAPITestCase(APITestCase):
         self.user.save()
 
         request = self.test_client.post(
-            '/api/auth/login', {'username': 'clemn', 'password': 'password123'})
-        #token = request.data['token']
+            '/api/v1/auth/login', {'username': 'clemn', 'password': 'password123'})
+        token = request.data['token']
 
-        self.auth = 'token'
+        self.auth = token
