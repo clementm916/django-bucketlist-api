@@ -28,6 +28,16 @@ class ItemSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'done',
                   'date_created', 'bucketlist_id', 'date_modified')
 
+    def create(self, validated_data):
+        print("VALIDATED: ", validated_data)
+        view = self.context['view']
+        bucketlist_id = view.kwargs.get('id')
+        add_to = {'bucketlist_id': view.get_object(bucketlist_id)}
+        data = validated_data.copy()
+        data.update(add_to)
+        print("NEW VALIDATED: ", data)
+        return Item.objects.create(**data)
+
 
 class CreatedbyField(serializers.RelatedField):
     def to_representation(self, value):

@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from .serializers import UserSerializer, BucketlistSerializer, ItemSerializer
 from . models import Bucketlist, Item
 
-from .utils.mixins import MultipleFieldLookupMixin
+from .utils.mixins import MultipleFieldLookupMixin, UpdateDestroyAPIView, CustomCreateAPIView
 
 
 class LoginView(ObtainAuthToken):
@@ -45,14 +45,25 @@ class BucketlistListView(generics.ListCreateAPIView):
 
 
 class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, Update or Delete a single bucketlist """
     queryset = Bucketlist.objects.all()
     serializer_class = BucketlistSerializer
     lookup_field = 'id'
 
 
-class ItemsView(generics.CreateAPIView):
-    pass
+class ItemsView(CustomCreateAPIView):
+    """Create an item """
+    serializer_class = ItemSerializer
+
+    def get_object(self, id):
+        try:
+            id = int(id)
+            return Bucketlist.objects.get(id=id)
+        except (Bucketlist.DoesNotExist, KeyError):
+            raise Http404
 
 
-class ItemsDetailView(generics.CreateAPIView):
-    pass
+class ItemsDetailView(MultipleFieldLookupMixin, UpdateDestroyAPIView):
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+    lookup_fields = ('bucketlist_id', 'id')
