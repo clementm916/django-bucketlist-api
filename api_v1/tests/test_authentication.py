@@ -27,8 +27,6 @@ class Test_User_Authentication(APITestCase):
         self.assertIn('token', str(request.data))
 
         # with wrong password
-        user = User(username='clemn', password='password123')
-        user.save()
         payload = {'username': 'clemn', 'password': 'wrongpass'}
         request = self.test_client.post(
             '/api/v1/auth/login', payload, format='json')
