@@ -13,7 +13,7 @@ class TestItem(BaseAPITestCase):
         self.bucket_id = self.bucket.id
 
     def test_creating_an_item(self):
-        payload = {'name': 'Cook'}
+        payload = {'name': 'Play soccer'}
         request = self.test_client.post(
             '/api/v1/bucketlists/' + str(self.bucket_id) + '/items/', payload, HTTP_AUTHORIZATION=self.auth, format='json')
         self.assertEqual(request.status_code, 201)
@@ -29,6 +29,7 @@ class TestItem(BaseAPITestCase):
             '/api/v1/bucketlists/' + str(self.bucket_id) + '/items/' + str(item_id), payload, HTTP_AUTHORIZATION=self.auth, format='json')
         self.assertEqual(request.status_code, 200)
         self.assertIn('Play soccer', str(request.data))
+
         # a non-existent item
         item_id = 'notthere'
         request = self.test_client.put(
@@ -48,3 +49,7 @@ class TestItem(BaseAPITestCase):
         self.assertEqual(request.status_code, 204)
 
         # a non-existent item
+        item_id = 'notthere'
+        request = self.test_client.put(
+            '/api/v1/bucketlists/' + str(self.bucket_id) + '/items/' + str(item_id), HTTP_AUTHORIZATION=self.auth, format='json')
+        self.assertEqual(request.status_code, 404)

@@ -39,6 +39,7 @@ class Test_User_Authentication(APITestCase):
         request = self.test_client.post(
             '/api/v1/auth/login', payload, format='json')
         self.assertEqual(request.status_code, 200)
+
         auth = request.data['token']
         request = self.test_client.get(
             '/api/v1/bucketlists/', HTTP_AUTHORIZATION=auth, format='json')

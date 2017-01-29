@@ -108,6 +108,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',),
 }
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
