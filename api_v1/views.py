@@ -8,8 +8,11 @@ from rest_framework import generics
 from rest_framework.response import Response
 
 from django.contrib.auth.models import User
+
 from .serializers import UserSerializer, BucketlistSerializer, ItemSerializer
 from . models import Bucketlist, Item
+
+from .utils.mixins import MultipleFieldLookupMixin
 
 
 class LoginView(ObtainAuthToken):
@@ -41,8 +44,10 @@ class BucketlistListView(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticated,)
 
 
-class BucketlistDetailView(generics.CreateAPIView):
-    pass
+class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Bucketlist.objects.all()
+    serializer_class = BucketlistSerializer
+    lookup_field = 'id'
 
 
 class ItemsView(generics.CreateAPIView):
