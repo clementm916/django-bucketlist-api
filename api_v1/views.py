@@ -14,6 +14,7 @@ from .serializers import UserSerializer, BucketlistSerializer, ItemSerializer
 from . models import Bucketlist, Item
 
 from .utils.mixins import MultipleFieldLookupMixin, UpdateDestroyAPIView, CustomCreateAPIView
+from .utils.pagination import BucketlistPagination
 
 
 class LoginView(ObtainAuthToken):
@@ -42,6 +43,7 @@ class BucketlistListView(generics.ListCreateAPIView):
     serializer_class = BucketlistSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    pagination_class = BucketlistPagination
 
     def get(self, request, *args, **kwargs):
         """List all bucketlists or search by name."""
@@ -68,6 +70,8 @@ class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, Update or Delete a single bucketlist """
 
     serializer_class = BucketlistSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
     lookup_field = 'id'
 
     def get_queryset(self):
@@ -80,6 +84,8 @@ class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
 class ItemsView(CustomCreateAPIView):
     """Create an item """
     serializer_class = ItemSerializer
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self, id, user):
         try:
@@ -94,3 +100,5 @@ class ItemsDetailView(MultipleFieldLookupMixin, UpdateDestroyAPIView):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     lookup_fields = ('bucketlist_id', 'id')
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)

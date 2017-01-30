@@ -35,16 +35,21 @@ class TestBucketLists(BaseAPITestCase):
         bucket_1.save()
         bucket_2 = Bucketlist(name="Cook", created_by=self.user)
         bucket_2.save()
+        bucket_3 = Bucketlist(name="Swim", created_by=self.user)
+        bucket_3.save()
 
         request = self.test_client.get(
             '/api/v1/bucketlists/', HTTP_AUTHORIZATION=self.auth, format='json')
         self.assertEqual(request.status_code, 200)
         self.assertIn('Play', str(request.data))
         self.assertIn('Cook', str(request.data))
-
-        # test retrieving with a custom pagination limit
+        self.assertIn('next', str(request.data))
 
         # test retrieving with a search query
+        request = self.test_client.get(
+            '/api/v1/bucketlists/?q=play', HTTP_AUTHORIZATION=self.auth, format='json')
+        self.assertEqual(request.status_code, 200)
+        self.assertIn('Play', str(request.data))
 
     def test_retrieving_a_single_bucketlist(self):
         # an existing bucketlist
