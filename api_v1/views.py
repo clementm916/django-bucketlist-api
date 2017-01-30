@@ -43,6 +43,19 @@ class BucketlistListView(generics.ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    def get(self, request, *args, **kwargs):
+        """List all bucketlists or search by name."""
+        search_name = request.GET.get('q', None)
+        if search_name:
+
+            search_result = Bucketlist.objects.filter(
+                name__icontains=search_name)
+
+            serializer = BucketlistSerializer(search_result, many=True)
+            return Response(serializer.data)
+
+        return self.list(request, *args, **kwargs)
+
     # overwite get queryset to returns bucketlists created by the user
     def get_queryset(self):
 
