@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from rest_framework.response import Response
 
+from django.http import Http404
+
 from django.contrib.auth.models import User
 
 from .serializers import UserSerializer, BucketlistSerializer, ItemSerializer
@@ -37,28 +39,41 @@ class BucketlistListView(generics.ListCreateAPIView):
 
     """
 
-    queryset = Bucketlist.objects.filter()
     serializer_class = BucketlistSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
+    # overwite get queryset to returns bucketlists created by the user
+    def get_queryset(self):
+
+        queryset = Bucketlist.objects.filter(created_by=self.request.user)
+
+        return queryset
+
 
 class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
     """Retrieve, Update or Delete a single bucketlist """
-    queryset = Bucketlist.objects.all()
+
     serializer_class = BucketlistSerializer
     lookup_field = 'id'
+
+    def get_queryset(self):
+
+        queryset = Bucketlist.objects.filter(created_by=self.request.user)
+
+        return queryset
 
 
 class ItemsView(CustomCreateAPIView):
     """Create an item """
     serializer_class = ItemSerializer
 
-    def get_object(self, id):
+    def get_object(self, id, user):
         try:
             id = int(id)
-            return Bucketlist.objects.get(id=id)
-        except (Bucketlist.DoesNotExist, KeyError):
+            print("USER:", user)
+            return Bucketlist.objects.filter(id=id, created_by=user)[0]
+        except (Bucketlist.DoesNotExist, KeyError, IndexError):
             raise Http404
 
 

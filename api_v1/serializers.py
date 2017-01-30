@@ -30,9 +30,13 @@ class ItemSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         print("VALIDATED: ", validated_data)
+
         view = self.context['view']
+        request = self.context['request']
+        print("USER:", str(request.user))
         bucketlist_id = view.kwargs.get('id')
-        add_to = {'bucketlist_id': view.get_object(bucketlist_id)}
+        add_to = {'bucketlist_id': view.get_object(
+            bucketlist_id, request.user)}
         data = validated_data.copy()
         data.update(add_to)
         print("NEW VALIDATED: ", data)
