@@ -24,7 +24,6 @@ class BucketlistTest(BaseAPITestCase):
 
         #assert attributes
         self.assertFalse(bucket.id == None)
-        self.assertEqual(bucket.id, self.user.id)
         self.assertEqual(bucket.name, "Cook")
         self.assertIn('clemn', str(bucket.created_by))
         year = str(datetime.today().year)
