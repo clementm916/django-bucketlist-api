@@ -33,7 +33,7 @@ class Bucketlist(AbstractBaseModel):
 
 class Item(AbstractBaseModel):
     """Defines the structure of Bucketlist-Item objects"""
-    done = models.BooleanField(default=True)
+    done = models.BooleanField(default=False)
     description = models.TextField(blank=True, default="")
     bucketlist_id = models.ForeignKey(
         Bucketlist, related_name='items', on_delete=models.CASCADE)

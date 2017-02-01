@@ -1,6 +1,8 @@
 from django.conf.urls import url, include
 from . import views
+from rest_framework_swagger.views import get_swagger_view
 
+schema_view = get_swagger_view(title='Bucketlist API')
 urlpatterns = [
     url(r'^auth/login$', views.LoginView.as_view(),
         name='login'),
@@ -13,5 +15,7 @@ urlpatterns = [
         views.ItemsView.as_view(), name='items'),
     url(r'^bucketlists/(?P<bucketlist_id>[0-9]{1,2})/items/(?P<id>[0-9]{1,2})$',
         views.ItemsDetailView.as_view(), name='item'),
+
+    url(r'^docs$', schema_view),
 
 ]

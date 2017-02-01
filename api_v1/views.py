@@ -17,9 +17,17 @@ from .utils.mixins import MultipleFieldLookupMixin, UpdateDestroyAPIView, Custom
 from .utils.pagination import BucketlistPagination
 
 
-class LoginView(ObtainAuthToken):
+class LoginView(ObtainAuthToken, generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
-        """ Logs in a user using username and password"""
+        """ 
+
+        Logs in a user using username and password
+        Method: POST
+          Parameters:
+              username (required)
+              password (required)
+          Response: JSON
+        """
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -28,7 +36,15 @@ class LoginView(ObtainAuthToken):
 
 
 class UserRegistrationView(generics.CreateAPIView):
-    """Registers a new user """
+    """
+    Freaking registers a new user 
+    Method: POST
+          Parameters:
+              username (required)
+              password (required)
+          Response: JSON
+
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -38,6 +54,13 @@ class BucketlistListView(generics.ListCreateAPIView):
     """
     List all bucketlists, search,or create a new bucketlist.
 
+    Method: POST
+          Parameters:
+              name  (required)
+          Header:
+              Authorization  (required)
+          Response: JSON
+
     """
 
     serializer_class = BucketlistSerializer
@@ -46,7 +69,20 @@ class BucketlistListView(generics.ListCreateAPIView):
     pagination_class = BucketlistPagination
 
     def get(self, request, *args, **kwargs):
-        """List all bucketlists or search by name."""
+        """List all bucketlists or search by name.
+
+        Method: GET
+          Parameters:
+              page  (optional)    default=1
+              limit  (optional) 
+              q      (optional) 
+             
+
+          Header:
+              Authorization  (required)
+          Response: JSON
+
+        """
         search_name = request.GET.get('q', None)
         if search_name:
 
@@ -67,7 +103,32 @@ class BucketlistListView(generics.ListCreateAPIView):
 
 
 class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
-    """Retrieve, Update or Delete a single bucketlist """
+    """
+    Retrieve(GET), Update(PUT) or Delete(DELETE) a single bucketlist 
+
+    Method: GET
+          Parameters:
+              id  (required)
+          Header:
+              Authorization  (required)
+          Response: JSON
+
+    Method: PUT
+          Parameters:
+              id  (required)
+              name(required)
+          Header:
+              Authorization  (required)
+          Response: JSON
+    Method: DELETE
+          Parameters:
+              id  (required)
+          Header:
+              Authorization  (required)
+          Response: JSON
+
+
+    """
 
     serializer_class = BucketlistSerializer
     authentication_classes = (TokenAuthentication,)
@@ -82,7 +143,19 @@ class BucketlistDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class ItemsView(CustomCreateAPIView):
-    """Create an item """
+    """
+    Create an item
+    Method: POST
+          Parameters:
+              id  (required)
+              name  (required)
+              description     (optional)
+              done      (optional)  
+          Header:
+              Authorization  (required)
+          Response: JSON 
+
+    """
     serializer_class = ItemSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -97,6 +170,29 @@ class ItemsView(CustomCreateAPIView):
 
 
 class ItemsDetailView(MultipleFieldLookupMixin, UpdateDestroyAPIView):
+    """
+    Update (PUT) or delete (DELETE) an item
+    Method: PUT
+          Parameters:
+              id  (required)
+              bucketlist_id  (required)
+              name  (optional)
+              description     (optional)
+              done      (optional)  
+          Header:
+              Authorization  (required)
+          Response: JSON 
+
+
+    Method: DELETE
+          Parameters:
+              id  (required)
+              bucketlist_id  (required)
+          Header:
+              Authorization  (required)
+          Response: JSON 
+
+    """
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
     lookup_fields = ('bucketlist_id', 'id')
